@@ -2,6 +2,7 @@ package jp.techacademy.kumiko.shima.taskapp;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Locale;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -11,6 +12,9 @@ public class Task extends RealmObject implements Serializable {
     private String title;
     private String contents;
     private Date date;
+
+    //課題
+    private String category;
 
     @PrimaryKey
     private int id;
@@ -45,5 +49,13 @@ public class Task extends RealmObject implements Serializable {
 
     public void setId(int id){
         this.id = id;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getCategory() {
+        return category;
     }
 }

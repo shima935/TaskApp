@@ -4,6 +4,8 @@ package jp.techacademy.kumiko.shima.taskapp;
 
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -48,18 +50,24 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
+                Intent intent = new Intent(MainActivity.this, InputActivity.class);
+                startActivity(intent);
             }
         });
 
+        //カテゴリ
+
+
+
+        //Realmの設定
         mRealm = Realm.getDefaultInstance();
         mRealm.addChangeListener(mRealmListener);
 
+        // ListViewの設定
         mTaskAdapter = new TaskAdapter(MainActivity.this);
         mListView = (ListView) findViewById(R.id.listView1);
 
+        // ListViewをタップしたときの処理
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -95,6 +103,17 @@ public class MainActivity extends AppCompatActivity {
                         results.deleteAllFromRealm();
                         mRealm.commitTransaction();
 
+                        Intent resultIntent = new Intent(getApplicationContext(), TaskAlarmReceiver.class);
+                        PendingIntent resultPendingIntent = PendingIntent.getBroadcast(
+                                MainActivity.this,
+                                task.getId(),
+                                resultIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+
+                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                        alarmManager.cancel(resultPendingIntent);
+
                         reloadListView();
 
                     }
@@ -124,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
 
         mRealm.close();
     }
+
+
 
 }
     /*rivate void addTaskForTest(){
